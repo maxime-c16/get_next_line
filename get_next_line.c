@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
+/*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 15:53:17 by mcauchy           #+#    #+#             */
-/*   Updated: 2025/02/14 17:38:25 by mcauchy          ###   ########.fr       */
+/*   Updated: 2025/04/27 11:46:39 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,72 +39,80 @@ char	*read_line(int fd, char *line)
 	char	*temp;
 
 	bytes_read = 1;
-	while (bytes_read > 0 && has_newline(line) < 1)
+	while (bytes_read > 0 && has_newline(line) < 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0 || (bytes_read == 0 && !line))
+		if (bytes_read < 0)
 		{
 			free(line);
 			return (NULL);
 		}
+		if (bytes_read == 0)
+			break ;
 		buffer[bytes_read] = '\0';
 		temp = ft_strjoin(line, buffer);
 		free(line);
-		line = ft_strdup(temp);
-		free(temp);
-	}
-	if (bytes_read == 0 && !line)
-	{
-		free(line);
-		return (NULL);
+		line = temp;
 	}
 	return (line);
+}
+
+static char	*extract_line(char **line)
+{
+	char	*str;
+	char	*temp;
+	int		nl_index;
+
+	nl_index = has_newline(*line);
+	if (nl_index >= 0)
+	{
+		str = ft_substr(*line, 0, nl_index + 1);
+		temp = ft_substr(*line, nl_index + 1, ft_strlen(*line) - nl_index - 1);
+		free(*line);
+		*line = temp;
+	}
+	else
+	{
+		str = ft_strdup(*line);
+		free(*line);
+		*line = NULL;
+	}
+	return (str);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*line = NULL;
-	char		*str;
-	char		*temp;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	line = read_line(fd, line);
-	if (!line)
+	if (!line || line[0] == '\0')
+	{
+		free(line);
+		line = NULL;
 		return (NULL);
-	str = ft_substr(line, 0, has_newline(line) + 1);
-	if (!str && line && line[0] != '\0')
-	{
-		str = ft_strdup(line);
-		free(line);
 	}
-	else
-	{
-		temp = ft_strdup(line + has_newline(line) + 1);
-		free(line);
-		line = ft_strdup(temp);
-		free(temp);
-	}
-	return (str);
+	return (extract_line(&line));
 }
 
-int	main(int ac, char **av)
-{
-	int		fd;
-	char	*line;
+// int	main(int ac, char **av)
+// {
+// 	int		fd;
+// 	char	*line;
 
-	if (ac != 2)
-		return (1);
-	fd = open(av[1], O_RDONLY);
-	if (fd < 0)
-		return (1);
-	line = get_next_line(fd);
-	while (line)
-	{
-		printf("%s", line);
-		free(line);
-		line = get_next_line(fd);
-	}
-	close(fd);
-	return (0);
-}
+// 	if (ac != 2)
+// 		return (1);
+// 	fd = open(av[1], O_RDONLY);
+// 	if (fd < 0)
+// 		return (1);
+// 	line = get_next_line(fd);
+// 	while (line)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 		line = get_next_line(fd);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }

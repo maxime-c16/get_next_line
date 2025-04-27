@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mcauchy <mcauchy@student.42.fr>            +#+  +:+       +#+        */
+/*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 16:00:24 by mcauchy           #+#    #+#             */
-/*   Updated: 2025/02/14 17:32:39 by mcauchy          ###   ########.fr       */
+/*   Updated: 2025/04/27 11:36:55 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	ft_strlen(char *str)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i])
 		i++;
 	return (i);
@@ -24,25 +26,22 @@ int	ft_strlen(char *str)
 
 char	*ft_strdup(char *str)
 {
-	char	*copy;
+	char	*ret;
+	int		len;
 	int		i;
 
 	i = 0;
-	if (!str || !*str)
+	len = ft_strlen(str);
+	ret = (char *)malloc(sizeof(char) * (len + 1));
+	if (!ret)
 		return (NULL);
-	while (str[i])
-		i++;
-	copy = (char *)malloc(sizeof(char) * (i + 1));
-	if (!copy)
-		return (NULL);
-	i = 0;
-	while (str[i])
+	while (i < len)
 	{
-		copy[i] = str[i];
+		ret[i] = str[i];
 		i++;
 	}
-	copy[i] = '\0';
-	return (copy);
+	ret[i] = '\0';
+	return (ret);
 }
 
 int	has_newline(char *str)
@@ -58,7 +57,7 @@ int	has_newline(char *str)
 			return (i);
 		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 char	*ft_strjoin(char *s1, char *s2)

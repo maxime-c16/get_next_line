@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mecauchy <mecauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/10 15:47:41 by mcauchy           #+#    #+#             */
-/*   Updated: 2025/05/04 14:36:34 by mecauchy         ###   ########.fr       */
+/*   Created: 2025/05/04 14:35:40 by mecauchy          #+#    #+#             */
+/*   Updated: 2025/05/04 14:48:33 by mecauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
 
-# define GET_NEXT_LINE_H
+# define GET_NEXT_LINE_BONUS_H
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -23,13 +23,23 @@
 #  define BUFFER_SIZE 1024
 # endif
 
-char	*get_next_line(int fd);
+typedef struct s_node
+{
+	int				fd;
+	char			*buff;
+	struct s_node	*next;
+}				t_node;
 
-char	*ft_strjoin(char *s1, char *s2);
-char	*ft_strdup(char *str);
+typedef struct s_gnl
+{
+	struct s_node	*head;
+}				t_gnl;
+
 char	*ft_substr(char *str, int start, int len);
-
-int		ft_strlen(char *str);
+void	remove_node(int fd);
+t_node	*get_node(int fd);
 int		has_newline(char *str);
+char	*ft_strdup(char *str);
+int		ft_strlen(char *s);
 
 #endif
